@@ -1,0 +1,12 @@
+{
+  "id": "EVT-000001",
+  "type": "receive",
+  "object": "AST-000001",
+  "quantity": 1,
+  "location": "LOC-000001",
+  "occurred_at": "2026-10-10T10:00:00+08:00",
+  "issue": 1,
+  "operation_key": "receipt-1",
+  "administrator": "填写真实GitHub用户名",
+  "reason": "填写实际验收结果"
+}

@@ -1,0 +1,7 @@
+{
+  "id": "LOC-000001",
+  "name": "填写实际位置名称",
+  "parent": null,
+  "description": "填写完整定位说明",
+  "storage": true
+}

@@ -1,0 +1,45 @@
+name: 损毁、遗失、过期或维修
+description: 报告异常，管理员核实后决定隔离、维修或核销
+title: "[incident] "
+body:
+  - type: markdown
+    attributes:
+      value: 先说明事实，不自行报废或删除台账。借用期间发生的问题引用原借用申请。
+  - type: dropdown
+    id: kind
+    attributes:
+      label: 异常类型
+      options: [损毁, 遗失, 过期, 维修需求, 其他异常]
+    validations:
+      required: true
+  - type: textarea
+    id: items
+    attributes:
+      label: 涉及物资
+      description: AST 或 BAT 编号、名称、数量、单位。
+    validations:
+      required: true
+  - type: input
+    id: parent
+    attributes:
+      label: 关联借用或其他 Issue
+      description: 借用期间发生的问题必填原借用 Issue。
+  - type: textarea
+    id: facts
+    attributes:
+      label: 发生时间、位置与事实
+      description: 说明发现情况、已采取的措施及是否存在安全风险，不公开敏感信息。
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 实物照片或其他依据
+      description: 只上传可公开资料；敏感材料使用私有引用。
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: 提交确认
+      options:
+        - label: 我是 SDC 成员；报告反映已知事实，正文和附件不含敏感个人信息。
+          required: true

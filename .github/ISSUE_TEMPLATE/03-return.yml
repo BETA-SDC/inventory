@@ -1,0 +1,49 @@
+name: 归还公共资产
+description: 报告已放回的资产，管理员检查后确认归还
+title: "[return] "
+body:
+  - type: markdown
+    attributes:
+      value: 填写原借用申请，管理员关联为子 Issue。报告归还不等于检查通过，勿自行结清原借用申请。
+  - type: input
+    id: parent
+    attributes:
+      label: 原借用 Issue
+      placeholder: "#123 或完整 Issue 链接"
+    validations:
+      required: true
+  - type: textarea
+    id: assets
+    attributes:
+      label: 本次归还清单
+      description: 填写 AST 编号及名称；分批归还说明本次归还与仍未归还的对象。
+    validations:
+      required: true
+  - type: input
+    id: returned
+    attributes:
+      label: 实际归还时间
+      placeholder: YYYY-MM-DD HH:mm，默认北京时间
+    validations:
+      required: true
+  - type: textarea
+    id: location
+    attributes:
+      label: 实际放回位置
+      description: LOC 编号及定位说明；与原位置不同须说明。
+    validations:
+      required: true
+  - type: textarea
+    id: condition
+    attributes:
+      label: 实物状况及照片
+      description: 配件是否齐全、是否损坏。照片可帮助管理员定位，上传前检查敏感信息。
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: 提交确认
+      options:
+        - label: 实物已放回说明的位置，等待管理员检查；正文和附件不含敏感个人信息。
+          required: true

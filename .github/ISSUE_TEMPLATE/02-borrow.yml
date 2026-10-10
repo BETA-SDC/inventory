@@ -1,0 +1,66 @@
+name: 借用公共资产
+description: 借用需要归还的设备或工具，预计归还日期必填
+title: "[borrow] "
+body:
+  - type: markdown
+    attributes:
+      value: 原则上先批准后领取；本申请在全部归还通过检查或异常处置完成前保持打开。
+  - type: textarea
+    id: assets
+    attributes:
+      label: 资产清单
+      description: 每行填写 AST 编号和名称；没有编号时说明物品，由管理员确认。
+    validations:
+      required: true
+  - type: input
+    id: borrower
+    attributes:
+      label: 实际借用人
+      description: 填写 GitHub 用户名；代申请时说明实际保管人。
+    validations:
+      required: true
+  - type: textarea
+    id: purpose
+    attributes:
+      label: 用途与使用地点
+      description: 可关联活动 Issue。私人地址或访问说明使用私有引用。
+    validations:
+      required: true
+  - type: input
+    id: start
+    attributes:
+      label: 预计或实际领取时间
+      placeholder: YYYY-MM-DD HH:mm，默认北京时间
+    validations:
+      required: true
+  - type: input
+    id: due
+    attributes:
+      label: 预计归还日期
+      placeholder: YYYY-MM-DD
+    validations:
+      required: true
+  - type: dropdown
+    id: timing
+    attributes:
+      label: 登记时机
+      options: [领取前申请, 特殊情况补登记]
+    validations:
+      required: true
+  - type: textarea
+    id: exception
+    attributes:
+      label: 补登记说明
+      description: 补登记必填实际领取时间、原因和知情管理员。
+  - type: input
+    id: contact
+    attributes:
+      label: 私有联系人记录
+      description: 只贴私有联系人链接；需要协助时说明，不公开手机号。
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: 提交确认
+      options:
+        - label: 我是 SDC 成员，承担保管和归还责任；已检查正文及附件不含敏感个人信息。
+          required: true

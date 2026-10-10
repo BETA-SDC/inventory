@@ -1,0 +1,44 @@
+name: 盘点或台账纠错
+description: 提交盘点范围或报告实物与台账差异
+title: "[stocktake] "
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: 事项类型
+      options: [发起盘点, 报告盘点结果, 台账纠错]
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: 范围与对象
+      description: 位置、资产或批次编号；整间盘点说明覆盖范围。
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: 计划或差异情况
+      description: 发起盘点填写计划；结果或纠错按对象列出账面数量、实际数量、单位及状况。
+    validations:
+      required: true
+  - type: input
+    id: time
+    attributes:
+      label: 预计或实际检查时间
+      placeholder: YYYY-MM-DD HH:mm，默认北京时间
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: 关联记录与依据
+      description: 原申请、操作编号、盘点任务或可公开照片。
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: 提交确认
+      options:
+        - label: 我是 SDC 成员；等待管理员复核，不自行修改台账，附件不含敏感个人信息。
+          required: true

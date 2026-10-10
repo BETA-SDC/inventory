@@ -1,0 +1,61 @@
+name: 新增资产或物资入库
+description: 报告采购、捐赠或现有物资初次登记，管理员验收后入账
+title: "[intake] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        请填写实际物品信息，不自行编造编号。批准后仍需管理员验收。不要公开手机号或敏感票据。
+  - type: dropdown
+    id: kind
+    attributes:
+      label: 物资类型
+      options: [设备, 工具, 办公耗材, 食品饮料, 其他待分类]
+    validations:
+      required: true
+  - type: textarea
+    id: items
+    attributes:
+      label: 物品清单
+      description: 每行一个物品，说明名称、规格型号、数量、单位；已有物品填写 ITM 编号。
+      placeholder: 名称 / 规格型号 / 数量 / 单位 / 已有物品编号（如有）
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: 来源与接收时间
+      description: 说明采购、捐赠或初始盘点，以及预计或实际接收时间。敏感凭证只提供私有链接。
+    validations:
+      required: true
+  - type: textarea
+    id: location
+    attributes:
+      label: 存放位置
+      description: 填写 LOC 编号；位置未登记时说明楼栋、房间、柜架及格口，由管理员确认。
+    validations:
+      required: true
+  - type: textarea
+    id: batch
+    attributes:
+      label: 食品或批次信息
+      description: 食品填写批次、每批数量、包装上的到期日期及保存要求；不同日期分别列出。
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 实物状况与照片
+      description: 说明新旧、配件和可用状况。照片不得含敏感资料。
+    validations:
+      required: true
+  - type: input
+    id: contact
+    attributes:
+      label: 私有联系人记录
+      description: 只贴既有私有联系人链接；尚未维护或无权限时说明需管理员协助，不填写手机号。
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: 提交确认
+      options:
+        - label: 我是 SDC 成员，已检查正文和附件不含敏感个人信息。
+          required: true

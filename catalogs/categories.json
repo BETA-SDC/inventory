@@ -1,0 +1,6 @@
+[
+  {"id": "equipment", "name": "设备", "kind": "asset"},
+  {"id": "tools", "name": "工具", "kind": "asset"},
+  {"id": "supplies", "name": "办公耗材", "kind": "batch"},
+  {"id": "food", "name": "食品饮料", "kind": "batch"}
+]

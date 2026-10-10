@@ -1,0 +1,39 @@
+name: 调拨或位置变更
+description: 移动物资前申请，已移动则说明实际情况
+title: "[transfer] "
+body:
+  - type: textarea
+    id: items
+    attributes:
+      label: 调拨清单
+      description: 填写 AST 或 BAT 编号、名称、数量、单位。
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: 原位置
+      description: LOC 编号或明确位置说明。
+    validations:
+      required: true
+  - type: input
+    id: destination
+    attributes:
+      label: 目标位置
+      description: LOC 编号或明确位置说明；新货位由管理员先登记。
+    validations:
+      required: true
+  - type: textarea
+    id: handover
+    attributes:
+      label: 原因、时间与交接人
+      description: 说明计划或实际时间、GitHub 用户名、是否已执行，食品说明保存条件。
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: 提交确认
+      options:
+        - label: 我是 SDC 成员；正文和附件不含敏感个人信息。
+          required: true
