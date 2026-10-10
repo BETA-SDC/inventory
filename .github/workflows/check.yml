@@ -21,6 +21,4 @@ jobs:
       - run: python3 scripts/check_repository.py
       - run: python3 scripts/inventory.py check
       - run: python3 -m unittest discover -s tests -v
-      - run: python3 scripts/inventory.py build
-      - name: Check generated views
-        run: git diff --exit-code -- views
+      - run: python3 scripts/inventory.py build --check

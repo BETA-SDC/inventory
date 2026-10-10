@@ -11,6 +11,7 @@ import json
 from pathlib import Path
 import re
 import sys
+from urllib.parse import urlencode
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -27,7 +28,7 @@ FIELDS = {
     "record": {
         "id", "type", "object", "quantity", "occurred_at", "issue", "operation_key",
         "administrator", "reason", "location", "destination", "borrower", "due_on",
-        "loan", "corrects",
+        "loan", "corrects", "source_digest",
     },
 }
 
@@ -140,6 +141,10 @@ def validate(data):
     held = set()
     operation_keys = set()
     for identifier, event in sorted(data["record"].items()):
+        if "source_digest" in event:
+            require(isinstance(event["source_digest"], str) and
+                    re.fullmatch(r"[0-9a-f]{64}", event["source_digest"]),
+                    f"{identifier}: invalid source digest")
         if "corrects" in event:
             require(isinstance(event["corrects"], str) and event["corrects"] in data["record"] and
                     event["corrects"] < identifier, f"{identifier}: previous correction reference required")
@@ -259,6 +264,72 @@ def render(data, state):
     return "\n".join(lines)
 
 
+def build_views(root, data, state, check=False):
+    output = {"README.md": render(data, state)}
+    for identifier, obj in sorted(data["object"].items()):
+        rows = [
+            f"# {cell(identifier)} — {cell(obj['name'])}", "",
+            "> 自动生成的公开档案，不手工修改。", "",
+            f"- 物品编号：{cell(obj['item'])}",
+        ]
+        if obj.get("expires_on"):
+            rows.append(f"- 到期日期：{cell(obj['expires_on'])}")
+        rows += ["", "## 存放位置", "", "| 货位 | 数量 | 状态 |", "| --- | --- | --- |"]
+        for (object_id, location), quantity in sorted(state[0].items()):
+            if object_id == identifier and quantity:
+                status = "隔离待处理" if identifier in state[2] else "在库"
+                rows.append(f"| [{location}](../locations/{location}.md) | {quantity} | {status} |")
+        rows += ["", "## 借用", ""]
+        for event_id, loan in sorted(state[1].items()):
+            if loan["object"] == identifier and loan["remaining"]:
+                rows.append(f"- {cell(event_id)}：{cell(loan['borrower'])}，预计归还 {loan['due_on']}，"
+                            f"[原申请](https://github.com/BETA-SDC/inventory/issues/{loan['issue']})")
+        rows += ["", "## 申请入口", ""]
+        if identifier.startswith("AST-"):
+            templates = [("借用", "02-borrow.yml", "assets"), ("归还", "03-return.yml", "assets")]
+        else:
+            templates = [("领用或消耗", "04-consume.yml", "items")]
+        templates += [("调拨", "05-transfer.yml", "items"), ("报告异常", "06-incident.yml", "items")]
+        for name, template, field in templates:
+            query = urlencode({"template": template, field: identifier})
+            rows.append(f"- [{name}](https://github.com/BETA-SDC/inventory/issues/new?{query})")
+        output[f"objects/{identifier}.md"] = "\n".join(rows) + "\n"
+    for identifier, location in sorted(data["location"].items()):
+        chain = []
+        current = identifier
+        while current is not None:
+            chain.append(data["location"][current]["name"])
+            current = data["location"][current].get("parent")
+        rows = [f"# {identifier} — {cell(location['name'])}", "",
+                "> 自动生成的公开货位档案，不手工修改。", "",
+                f"- 地址：{cell(' / '.join(reversed(chain)))}",
+                f"- 定位说明：{cell(location['description'])}",
+                f"- 可存放物资：{'是' if location['storage'] else '否'}", "",
+                "## 本位置物资", "", "| 对象 | 名称 | 数量 |",
+                "| --- | --- | --- |"]
+        for (object_id, location_id), quantity in sorted(state[0].items()):
+            if location_id == identifier and quantity:
+                rows.append(f"| [{object_id}](../objects/{object_id}.md) | "
+                            f"{cell(data['object'][object_id]['name'])} | {quantity} |")
+        rows += ["", "## 下级位置", ""]
+        for child_id, child in sorted(data["location"].items()):
+            if child.get("parent") == identifier:
+                rows.append(f"- [{child_id} — {cell(child['name'])}]({child_id}.md)")
+        output[f"locations/{identifier}.md"] = "\n".join(rows) + "\n"
+    for relative, content in output.items():
+        path = root / "views" / relative
+        if check:
+            require(path.is_file() and path.read_text(encoding="utf-8") == content,
+                    f"Generated view missing or stale: {relative}")
+        else:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(content, encoding="utf-8")
+    if check:
+        existing = {path.relative_to(root / "views").as_posix() for path in (root / "views").rglob("*.md")}
+        require(not existing - set(output), "Obsolete generated views found")
+    return output
+
+
 def add(root, kind, draft_path):
     data = load(root)
     validate(data)
@@ -298,7 +369,8 @@ def main():
     parser.add_argument("--root", type=Path, default=ROOT)
     subcommands = parser.add_subparsers(dest="command", required=True)
     subcommands.add_parser("check")
-    subcommands.add_parser("build")
+    command = subcommands.add_parser("build")
+    command.add_argument("--check", action="store_true", help="Check generated views without writing")
     command = subcommands.add_parser("add")
     command.add_argument("kind", choices=PREFIXES)
     command.add_argument("--input", type=Path, required=True)
@@ -310,10 +382,8 @@ def main():
             data = load(args.root)
             state = validate(data)
             if args.command == "build":
-                output = args.root / "views/README.md"
-                output.parent.mkdir(parents=True, exist_ok=True)
-                output.write_text(render(data, state), encoding="utf-8")
-                print(f"Generated {output}")
+                outputs = build_views(args.root, data, state, check=args.check)
+                print(f"{'Checked' if args.check else 'Generated'} {len(outputs)} inventory views.")
             else:
                 print("Inventory validation passed.")
     except (ValueError, OSError, TypeError, KeyError) as error:

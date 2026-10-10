@@ -1,6 +1,6 @@
 # 管理员操作说明
 
-目前所有操作在管理员本地进行，不会因为成员提交 Issue 自动记账。
+目前所有登记在管理员本地进行，不会因为成员提交 Issue 自动记账。已有申请可使用 [Issue 草稿导入](requests.md)减少重复填写，并用[标签工具](labels.md)打印实物编号。
 
 ## 启用
 
@@ -52,7 +52,7 @@ python3 scripts/inventory.py build
 ```bash
 git diff --check
 git diff
-python3 -m unittest discover -s tests -v
+.venv/bin/python -m unittest discover -s tests -v
 git add locations items objects records views catalogs
 git commit -m "Record inventory operation for issue #N"
 git push

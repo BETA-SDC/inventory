@@ -2,7 +2,7 @@
 
 SDC 成员通过本仓库的 Issues 申请新增、借用、归还、领用、调拨或报告异常。管理员审核、确认实物操作，再维护正式台账。普通成员不编辑仓库文件，也不提交台账 PR。
 
-当前是建设第一阶段：已确定管理规划、业务规则和申请模板，并提供管理员登记、自动校验及台账生成工具。尚未接入 Issue 自动解析、二维码标签、定期提醒和自动关闭。
+目前已提供管理规则、七类申请模板、管理员登记、只读 Issue 导入、草稿复核、台账生成和二维码 PDF 标签。尚未接入 Issue 自动反馈、定期提醒、并发登记队列和自动关闭。
 
 ## 入口
 
@@ -12,6 +12,8 @@ SDC 成员通过本仓库的 Issues 申请新增、借用、归还、领用、�
 - [实物编号与存放位置](policies/identification.md)
 - [私有信息规则](policies/privacy.md)
 - [管理员操作说明](docs/administration.md)
+- [Issue 草稿导入](docs/requests.md)
+- [标签打印](docs/labels.md)
 - [自动生成的查询台账](views/README.md)
 
 ## 数据分工
@@ -38,9 +40,15 @@ SDC 成员通过本仓库的 Issues 申请新增、借用、归还、领用、�
 ## 管理员工具
 
 ```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-dev.txt
+.venv/bin/python scripts/requests.py prepare --issue 123 --output .scratch/issue-123.json
+.venv/bin/python scripts/labels.py --ids AST-000001 LOC-000001 --output output/pdf/labels.pdf
 python3 scripts/inventory.py check
 python3 scripts/inventory.py build
-python3 -m unittest discover -s tests -v
+.venv/bin/python -m unittest discover -s tests -v
 ```
+
+`123` 和示例编号须替换为真实已有对象。首次登记及详细步骤见管理员说明。
 
 CI 只有读取仓库和校验的权限，不依据公开申请自动改写正式文件。

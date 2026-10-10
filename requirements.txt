@@ -1,0 +1,2 @@
+PyYAML>=6,<7
+reportlab>=4.4,<5
