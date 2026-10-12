@@ -14,6 +14,7 @@ SDC 成员通过本仓库的 Issues 申请新增、借用、归还、领用、�
 - [管理员操作说明](docs/administration.md)
 - [Issue 草稿导入](docs/requests.md)
 - [标签打印](docs/labels.md)
+- [提醒报告](docs/reports.md)
 - [自动生成的查询台账](views/README.md)
 
 ## 数据分工
@@ -44,6 +45,7 @@ python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements-dev.txt
 .venv/bin/python scripts/requests.py prepare --issue 123 --output .scratch/issue-123.json
 .venv/bin/python scripts/labels.py --ids AST-000001 LOC-000001 --output output/pdf/labels.pdf
+.venv/bin/python scripts/reports.py --as-of 2026-10-12 --output output/alerts.md
 python3 scripts/inventory.py check
 python3 scripts/inventory.py build
 .venv/bin/python -m unittest discover -s tests -v

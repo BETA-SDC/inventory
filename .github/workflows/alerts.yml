@@ -1,0 +1,44 @@
+name: Generate inventory alerts
+
+on:
+  schedule:
+    - cron: "15 1 * * 1"
+  workflow_dispatch:
+    inputs:
+      report_date:
+        description: "Report date in YYYY-MM-DD; leave blank for today"
+        required: false
+        type: string
+      expiry_days:
+        description: "Days ahead for food expiry alerts"
+        required: false
+        default: "7"
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python3 -m pip install -r requirements.txt
+      - name: Generate report
+        env:
+          REPORT_DATE: ${{ inputs.report_date }}
+          EXPIRY_DAYS: ${{ inputs.expiry_days || '7' }}
+        run: |
+          report_date="${REPORT_DATE:-$(date -u +%F)}"
+          python3 scripts/reports.py \
+            --as-of "$report_date" \
+            --expiry-days "$EXPIRY_DAYS" \
+            --output output/alerts.md
+      - uses: actions/upload-artifact@v4
+        with:
+          name: inventory-alerts
+          path: output/alerts.md
+          if-no-files-found: error
